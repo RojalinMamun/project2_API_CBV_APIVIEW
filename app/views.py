@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from app.models import *
 from app.serializers import *
 from rest_framework.response import Response 
+from rest_framework import status
 
 class ProductCrud(APIView):
     def get(self,request):
@@ -14,4 +15,21 @@ class ProductCrud(APIView):
         return Response(PJD.data)
 
     def post(self,request):
-        pass 
+        PMSD=ProductSerializer(data=request.data)
+        if PMSD.is_valid():
+            PMSD.save()
+            return Response({'message': 'Product is created'})
+
+        return Response({'failed':'Product creation is failed' })
+
+    def put(self,request):
+        id=request.data['id']
+        PO=Product.objects.get(id=id)
+        UPO=ProductSerializer(PO,data=request.data)
+        if UPO.is_valid():
+            UPO.save()
+            return Response({'message': 'Product is Updated'})
+
+        return Response({'failed':'Product is not Updated' })
+
+
